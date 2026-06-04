@@ -1,8 +1,8 @@
 class MoleMacWidget < Formula
   desc "Native macOS desktop widget with live system metrics"
   homepage "https://github.com/bsnkhua/mole-mac-widget"
-  url "https://github.com/bsnkhua/mole-mac-widget/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "5f991d558d8ba652d18b534036767025c4984491dba33e4b1c0aa7cb4ec93ab2"
+  url "https://github.com/bsnkhua/mole-mac-widget/archive/refs/tags/v0.2.0.tar.gz"
+  sha256 "168c236678959b2ea5ab269a05efac8b0a2ed587e5dc52f5c4a659ba2eacd188"
   license "MIT"
   head "https://github.com/bsnkhua/mole-mac-widget.git", branch: "main"
 
@@ -31,6 +31,10 @@ class MoleMacWidget < Formula
         mole-widget
 
       Quit it from the menu bar icon (chart symbol) -> Quit mole-widget.
+
+      If you enabled "Launch at login", re-toggle it after upgrading
+      (the login item points to the versioned install path), and
+      disable it before uninstalling.
     EOS
   end
 
