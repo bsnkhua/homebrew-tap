@@ -1,8 +1,8 @@
 class MoleMacWidget < Formula
   desc "Native macOS desktop widget with live system metrics"
   homepage "https://github.com/bsnkhua/mole-mac-widget"
-  url "https://github.com/bsnkhua/mole-mac-widget/archive/refs/tags/v0.2.0.tar.gz"
-  sha256 "168c236678959b2ea5ab269a05efac8b0a2ed587e5dc52f5c4a659ba2eacd188"
+  url "https://github.com/bsnkhua/mole-mac-widget/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "e186aa2d9fc6d3ea1fb15b053204f1ecf9f5a26db69d92e91543cf5b4f480377"
   license "MIT"
   head "https://github.com/bsnkhua/mole-mac-widget.git", branch: "main"
 
@@ -17,6 +17,7 @@ class MoleMacWidget < Formula
     app = prefix/"Mole Widget.app"
     (app/"Contents/MacOS").install ".build/release/MoleWidget"
     (app/"Contents").install "Resources/Info.plist"
+    (app/"Contents/Resources").install "Resources/AppIcon.icns"
     system "codesign", "--force", "--sign", "-", app
 
     (bin/"mole-widget").write <<~EOS
