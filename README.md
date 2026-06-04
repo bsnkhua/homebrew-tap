@@ -12,4 +12,4 @@ brew install bsnkhua/tap/<formula>
 
 | Formula | Description |
 |---|---|
-| [`mole-mac-widget`](https://github.com/bsnkhua/mole-mac-widget) | Native macOS desktop widget with live system metrics |
+| [`mole-widget`](https://github.com/bsnkhua/mole-widget) | Native macOS desktop widget with live system metrics |
