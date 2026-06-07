@@ -2,7 +2,7 @@ class Vuvuzela < Formula
   desc "macOS desktop widget for FIFA World Cup 2026 — groups, matches, bracket"
   homepage "https://github.com/bsnkhua/vuvuzela"
   url "https://github.com/bsnkhua/vuvuzela/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "PLACEHOLDER"
+  sha256 "4f4b8c7e335830a2cba50038ac478784fbabbfb29f42178ff2bc22e3c531aa1c"
   license "MIT"
   head "https://github.com/bsnkhua/vuvuzela.git", branch: "main"
 
