@@ -1,8 +1,8 @@
 class MoleWidget < Formula
   desc "Native macOS desktop widget with live system metrics"
   homepage "https://github.com/bsnkhua/mole-widget"
-  url "https://github.com/bsnkhua/mole-widget/archive/refs/tags/v0.5.2.tar.gz"
-  sha256 "22ac4829ce10b63154d5c3150e8b44550446a685723a44c358f894e490802c8d"
+  url "https://github.com/bsnkhua/mole-widget/archive/refs/tags/v0.5.3.tar.gz"
+  sha256 "e1512737d17c508c128b1922225f4719c68903bc7308b09bb62e7fe08c8ae718"
   license "MIT"
   head "https://github.com/bsnkhua/mole-widget.git", branch: "main"
 
