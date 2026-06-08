@@ -6,7 +6,6 @@ class Vuvuzela < Formula
   license "MIT"
   head "https://github.com/bsnkhua/vuvuzela.git", branch: "main"
 
-  depends_on :macos
   depends_on macos: :sonoma
 
   def install
