@@ -23,13 +23,31 @@ class MoleWidget < Formula
     MachO::Tools.add_rpath(app/"Contents/MacOS/MoleWidget", "@executable_path/../Frameworks")
     (app/"Contents").install "Resources/Info.plist"
     (app/"Contents/Resources").install "Resources/AppIcon.icns"
-    system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
-    system "codesign", "--force", "--sign", "-", app
 
     (bin/"mole-widget").write <<~EOS
       #!/bin/bash
       exec open "#{prefix}/Mole Widget.app"
     EOS
+  end
+
+  # Sign in post_install, not install: Homebrew re-signs/relocates the keg after
+  # the install phase, which would otherwise invalidate the app's seal over
+  # Sparkle.framework. Signing last makes the installed bundle verify cleanly.
+  # Inside-out order (nested code, then framework, then app) mirrors the release
+  # CI; we omit the hardened runtime (`--options runtime`) the CI uses -- it is
+  # only needed for the notarized Developer ID build and would trip library
+  # validation on these ad-hoc signatures.
+  def post_install
+    app = prefix/"Mole Widget.app"
+    sparkle = app/"Contents/Frameworks/Sparkle.framework/Versions/B"
+    system "codesign", "--force", "--preserve-metadata=entitlements,identifier",
+           "--sign", "-", sparkle/"XPCServices/Downloader.xpc"
+    system "codesign", "--force", "--preserve-metadata=entitlements,identifier",
+           "--sign", "-", sparkle/"XPCServices/Installer.xpc"
+    system "codesign", "--force", "--sign", "-", sparkle/"Autoupdate"
+    system "codesign", "--force", "--sign", "-", sparkle/"Updater.app"
+    system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
+    system "codesign", "--force", "--sign", "-", app
   end
 
   def caveats
@@ -48,5 +66,6 @@ class MoleWidget < Formula
   test do
     assert_path_exists prefix/"Mole Widget.app/Contents/MacOS/MoleWidget"
     system "/usr/bin/plutil", "-lint", prefix/"Mole Widget.app/Contents/Info.plist"
+    system "codesign", "--verify", "--deep", "--strict", prefix/"Mole Widget.app"
   end
 end
