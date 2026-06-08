@@ -1,8 +1,8 @@
 class Vuvuzela < Formula
   desc "macOS desktop widget for FIFA World Cup 2026 — groups, matches, bracket"
   homepage "https://github.com/bsnkhua/vuvuzela"
-  url "https://github.com/bsnkhua/vuvuzela/archive/refs/tags/v1.0.4.tar.gz"
-  sha256 "8a727bcb9aaa08fd0c9e8940bf924dde10cbaa131019bf66e9be53bffd2d0798"
+  url "https://github.com/bsnkhua/vuvuzela/archive/refs/tags/v1.1.0.tar.gz"
+  sha256 "6720fb5aacce4a108392258c831773be5e5526f381cc19f9ed7b81a02f77f6a7"
   license "MIT"
   head "https://github.com/bsnkhua/vuvuzela.git", branch: "main"
 
@@ -24,6 +24,9 @@ class Vuvuzela < Formula
     (app/"Contents").install "Resources/Info.plist"
     (app/"Contents/Resources").install "Resources/AppIcon.icns"
     (app/"Contents/Resources").install "Resources/vuvuzela-menubar.png"
+    (app/"Contents/Resources").install "Resources/goal.caf"
+    (app/"Contents/Resources").install "Resources/start.caf"
+    (app/"Contents/Resources").install "Resources/finish.caf"
     system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
     system "codesign", "--force", "--sign", "-", app
 
@@ -49,6 +52,7 @@ class Vuvuzela < Formula
   test do
     assert_path_exists prefix/"Vuvuzela.app/Contents/MacOS/Vuvuzela"
     assert_path_exists prefix/"Vuvuzela.app/Contents/Frameworks/Sparkle.framework"
+    assert_path_exists prefix/"Vuvuzela.app/Contents/Resources/goal.caf"
     system "/usr/bin/plutil", "-lint", prefix/"Vuvuzela.app/Contents/Info.plist"
   end
 end
