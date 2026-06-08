@@ -6,7 +6,6 @@ class MoleWidget < Formula
   license "MIT"
   head "https://github.com/bsnkhua/mole-widget.git", branch: "main"
 
-  depends_on :macos
   depends_on macos: :sonoma
 
   def install
@@ -21,8 +20,7 @@ class MoleWidget < Formula
 
     cp ".build/release/MoleWidget", app/"Contents/MacOS/MoleWidget"
     cp_r ".build/release/Sparkle.framework", app/"Contents/Frameworks/Sparkle.framework"
-    system "install_name_tool", "-add_rpath", "@executable_path/../Frameworks",
-           app/"Contents/MacOS/MoleWidget"
+    MachO::Tools.add_rpath(app/"Contents/MacOS/MoleWidget", "@executable_path/../Frameworks")
     (app/"Contents").install "Resources/Info.plist"
     (app/"Contents/Resources").install "Resources/AppIcon.icns"
     system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
