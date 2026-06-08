@@ -1,8 +1,8 @@
 class MoleWidget < Formula
   desc "Native macOS desktop widget with live system metrics"
   homepage "https://github.com/bsnkhua/mole-widget"
-  url "https://github.com/bsnkhua/mole-widget/archive/refs/tags/v0.5.3.tar.gz"
-  sha256 "e1512737d17c508c128b1922225f4719c68903bc7308b09bb62e7fe08c8ae718"
+  url "https://github.com/bsnkhua/mole-widget/archive/refs/tags/v0.6.0.tar.gz"
+  sha256 "d6c5f975860a5ae23281bcfb77d3925aaccf1247a142aa08eec97094963d65cc"
   license "MIT"
   head "https://github.com/bsnkhua/mole-widget.git", branch: "main"
 
@@ -15,9 +15,17 @@ class MoleWidget < Formula
     system "swift", "build", "--disable-sandbox", "-c", "release"
 
     app = prefix/"Mole Widget.app"
-    (app/"Contents/MacOS").install ".build/release/MoleWidget"
+    (app/"Contents/MacOS").mkpath
+    (app/"Contents/Resources").mkpath
+    (app/"Contents/Frameworks").mkpath
+
+    cp ".build/release/MoleWidget", app/"Contents/MacOS/MoleWidget"
+    cp_r ".build/release/Sparkle.framework", app/"Contents/Frameworks/Sparkle.framework"
+    system "install_name_tool", "-add_rpath", "@executable_path/../Frameworks",
+           app/"Contents/MacOS/MoleWidget"
     (app/"Contents").install "Resources/Info.plist"
     (app/"Contents/Resources").install "Resources/AppIcon.icns"
+    system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
     system "codesign", "--force", "--sign", "-", app
 
     (bin/"mole-widget").write <<~EOS
