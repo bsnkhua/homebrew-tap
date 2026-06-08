@@ -18,21 +18,38 @@ class Vuvuzela < Formula
 
     cp ".build/release/Vuvuzela", app/"Contents/MacOS/Vuvuzela"
     cp_r ".build/release/Sparkle.framework", app/"Contents/Frameworks/Sparkle.framework"
-    system "install_name_tool", "-add_rpath", "@executable_path/../Frameworks",
-           app/"Contents/MacOS/Vuvuzela"
+    MachO::Tools.add_rpath(app/"Contents/MacOS/Vuvuzela", "@executable_path/../Frameworks")
     (app/"Contents").install "Resources/Info.plist"
     (app/"Contents/Resources").install "Resources/AppIcon.icns"
     (app/"Contents/Resources").install "Resources/vuvuzela-menubar.png"
     (app/"Contents/Resources").install "Resources/goal.caf"
     (app/"Contents/Resources").install "Resources/start.caf"
     (app/"Contents/Resources").install "Resources/finish.caf"
-    system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
-    system "codesign", "--force", "--sign", "-", app
 
     (bin/"vuvuzela").write <<~EOS
       #!/bin/bash
       exec open "#{prefix}/Vuvuzela.app"
     EOS
+  end
+
+  # Sign in post_install, not install: Homebrew re-signs/relocates the keg after
+  # the install phase, which would otherwise invalidate the app's seal over
+  # Sparkle.framework. Signing last makes the installed bundle verify cleanly.
+  # Inside-out order (nested code, then framework, then app) mirrors the release
+  # CI; we omit the hardened runtime (`--options runtime`) the CI uses -- it is
+  # only needed for the notarized Developer ID build and would trip library
+  # validation on these ad-hoc signatures.
+  def post_install
+    app = prefix/"Vuvuzela.app"
+    sparkle = app/"Contents/Frameworks/Sparkle.framework/Versions/B"
+    system "codesign", "--force", "--preserve-metadata=entitlements,identifier",
+           "--sign", "-", sparkle/"XPCServices/Downloader.xpc"
+    system "codesign", "--force", "--preserve-metadata=entitlements,identifier",
+           "--sign", "-", sparkle/"XPCServices/Installer.xpc"
+    system "codesign", "--force", "--sign", "-", sparkle/"Autoupdate"
+    system "codesign", "--force", "--sign", "-", sparkle/"Updater.app"
+    system "codesign", "--force", "--sign", "-", app/"Contents/Frameworks/Sparkle.framework"
+    system "codesign", "--force", "--sign", "-", app
   end
 
   def caveats
@@ -53,5 +70,6 @@ class Vuvuzela < Formula
     assert_path_exists prefix/"Vuvuzela.app/Contents/Frameworks/Sparkle.framework"
     assert_path_exists prefix/"Vuvuzela.app/Contents/Resources/goal.caf"
     system "/usr/bin/plutil", "-lint", prefix/"Vuvuzela.app/Contents/Info.plist"
+    system "codesign", "--verify", "--deep", "--strict", prefix/"Vuvuzela.app"
   end
 end
